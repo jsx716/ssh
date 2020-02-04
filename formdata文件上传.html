@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="bootstrap.min.css">
+</head>
+<body>
+<div class="container" style="margin-top: 20px">
+  <form>
+    <input type="file" id="file">
+  </form>
+  <img src="" alt="" id="img">
+  <div class="progress" style="margin-top: 20px">
+    <div class="progress-bar" role="progressbar"
+         aria-valuenow="60" aria-valuemin="0"
+         aria-valuemax="100" style="width: 0%;" id="bar">
+      0%
+    </div>
+  </div>
+</div>
+
+<script>
+  const file = document.getElementById('file')
+  const bar = document.getElementById('bar')
+  const img = document.getElementById('img')
+  file.onchange = function () {
+    const formData = new FormData()
+    formData.append('attrName', this.files[0])
+    const xhr = new XMLHttpRequest()
+    xhr.open('post', 'http://localhost:3000/uploads')
+    // 文件上传进度条的显示
+    xhr.upload.onprogress = function (ev) {
+      const pro = (ev.loaded / ev.total) * 100 + '%'
+      bar.style.width = bar.innerHTML = pro
+    }
+    xhr.send(formData)
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        img.src = JSON.parse(xhr.responseText).path
+      }
+    }
+  }
+</script>
+</body>
+</html>
